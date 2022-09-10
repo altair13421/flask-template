@@ -36,6 +36,7 @@ def clear_db() -> None:
             'password': admin_.admin_password,
             'token': admin_.admin_token,
         }
+    db.session.close()
     db.drop_all()
     db.create_all()
     if len_admins != 0:
