@@ -13,11 +13,15 @@ both_ = ["GET", "POST"]
 def base() -> Response:
     return Response("Server Running")
 
+# USERS
 @app.route('/login')
 def login() -> str:
     """Checks Login Information with the db
     Format
-    data = {"username": str -> username, "password": str -> password}
+    data = {
+        "username": str -> username/email, 
+        "password": str -> password
+    }
 
     Returns:
         str: data in response['data'], keys are ['login', 'user_id'] OR ['login', 'error']
@@ -26,7 +30,7 @@ def login() -> str:
     if request.method == "POST" and data:
         username = data["username"]
         password = data["password"]
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=username).first() or User.query.filter_by(email=data["username"]).first()
         if user and user.password == password:
             return jsonify(good_response({"login": True, "user_id": user.id, "token": user.get_token()}))
         else:
@@ -49,7 +53,12 @@ def users() -> str:
 def add_user() -> str:
     """Adds a User
     Format:
-    data = {"username": str -> username, "password": str -> password, "name": str -> name, "date_of_birth": str -> dob <"DD-MM-YYYY">}
+    data = {
+        "username": str -> username, 
+        "password": str -> password, 
+        "name": str -> name, 
+        "date_of_birth": str -> dob <"DD-MM-YYYY">
+    }
 
     Returns:
         str: data in response['data'], keys are ['user_id'] OR ['error']
@@ -75,7 +84,10 @@ def add_user() -> str:
 @app.route('/user/<user_id>/about/add_about', methods=both_)
 def add_about(user_id: int) -> str:
     """Format
-    data = {"about": str -> about, "token": str -> token}
+    data = {
+        "about": str -> about, 
+        "token": str -> token
+    }
 
     Args:
         user_id (int): user_id to Change About in
@@ -115,11 +127,14 @@ def about(user_id: int) -> str:
     result['len_posts'] = len(result['posts'])
     return jsonify(good_response(result))
 
+# USER EDIT
 @app.route('/user/<user_id>/delete', methods=both_)
 def delete_user(user_id: int) -> str:
     """Delete A User
     Format
-    data = {"token": user_token}
+    data = {
+        "token": user_token
+    }
 
     Args:
         user_id (int): user_id to Delete User
@@ -136,11 +151,16 @@ def delete_user(user_id: int) -> str:
     else:
         return jsonify(bad_response(result={"error": "token bad"}))
 
+# POSTS
 @app.route('/user/<user_id>/add_post', methods=['GET', 'POST'])
 def add_post(user_id: int) -> str:
     """Adds a Post
     Format:
-    data = {"post_title": str -> post_title, "post_body": str -> post_body, "token": str -> user_token}
+    data = {
+        "post_title": str -> post_title, 
+        "post_body": str -> post_body, 
+        "token": str -> user_token
+    }
 
     Returns:
         str: data in response['data'], keys are ['post_id'] OR ['error']
@@ -183,35 +203,16 @@ def view_post(user_id: int, post_id: int) -> str:
         return jsonify(good_response(result))
     else:
         return jsonify(bad_response("[post_deleted]"))
-    
 
-@app.route('/user/post/add_comment', methods=["GET", "POST"])
-def add_comment() -> str:
-    """Adds a Comment
-    Format:
-    data = {"user_id": int -> user_id, "post_id": int -> post_id, "comment_body": str -> comment_body, "token": str-> user_token}
-
-    Returns:
-        str: data in response['data'], keys are ['comment_id', 'post_id'] OR ['error']
-    """    
-    data = request.get_json()
-    if request.method == "POST" and data:
-        user = User.query.get(data["user_id"])
-        if user.get_token() == data['token']:
-            if not Posts.query.get(data["post_id"]).first().is_deleted:
-                comment = Comments(
-                    comment_body=data["comment_body"],
-                    comment_by_user=user,
-                    comment_post=Posts.query.get(data["post_id"]),
-                )
-                add(comment)
-                return jsonify(good_response({"comment_id": comment.comment_id, "post_id": data["post_id"]}))
-
+# POST EDITS
 @app.route('/user/post/<post_id>/delete', methods=['GET', 'POST'])
 def delete_post(post_id: int) -> str:
     """Delete a Post
     format:
-    Data = {"user_id": int -> user_id, "token": str-> user_token}
+    Data = {
+        "user_id": int -> user_id, 
+        "token": str-> user_token
+    }
 
     Args:
         post_id (int): post_id to delete
@@ -227,15 +228,53 @@ def delete_post(post_id: int) -> str:
         db.session.commit()
         return jsonify(good_response({"result": "Post Deleted"}))
 
-@app.route('/user/comment/<comment_id>/delete', methods=['GET',"POST"])
-def delete_comment(comment_id: int) -> str:
+# COMMENTS
+@app.route('/user/<user_id>/post/add_comment', methods=["GET", "POST"])
+def add_comment(user_id: int) -> str:
+    """Adds a Comment
+    Format:
+    data = {
+        "post_id": int -> post_id, 
+        "comment_body": str -> comment_body, 
+        "token": str-> user_token
+    }
+    
+    Args:
+        user_id (int): user_id
+
+    Returns:
+        str: data in response['data'], keys are ['comment_id', 'post_id'] OR ['error']
+    """    
+    data = request.get_json()
+    if request.method == "POST" and data:
+        user = User.query.get(user_id)
+        if user.get_token() == data['token']:
+            if not Posts.query.get(data["post_id"]).first().is_deleted:
+                comment = Comments(
+                    comment_body=data["comment_body"],
+                    comment_by_user=user,
+                    comment_post=Posts.query.get(data["post_id"]),
+                )
+                add(comment)
+                return jsonify(good_response({"comment_id": comment.comment_id, "post_id": data["post_id"]}))
+
+# Edit Comments
+@app.route('/user/<user_id>/comment/<comment_id>/delete', methods=['GET',"POST"])
+def delete_comment(user_id: int, comment_id: int) -> str:
     """Deletes a User Comment
+    data = {
+        "token": str -> user_token
+    }
+
+    Args:
+        user_id (int): user_id
+        comment_id (int): comment_id
 
     Returns:
         str: data in response['data'], keys are ['result']
     """
     data = request.get_json()
-    user = User.query.get(data["user_id"])
+    user = User.query.get(user_id)
     if user and user.get_token() == data["token"]:
         comment = Comments.query.get(comment_id)
         comment.delete_comment()

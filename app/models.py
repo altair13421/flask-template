@@ -19,12 +19,13 @@ class User(db.Model):
     password = db.Column(db.String, index=False, nullable=False)
     name = db.Column(db.String, index=True, nullable=False)
     date_of_birth = db.Column(db.String)
-    is_deleted = db.Column(db.Boolean, default=False)
     about_user = db.Column(db.String, default=f"Hi I am User {username}")
     token = db.Column(db.String, unique=True)
 
     posts = db.relationship("Posts", backref="writer", lazy="dynamic")
     comments_by_user = db.relationship("Comments", backref="comment_by_user", lazy='dynamic')
+    
+    is_deleted = db.Column(db.Boolean, default=False)
 
     def set_about_user(self, about):
         self.about_user = about
@@ -34,6 +35,18 @@ class User(db.Model):
     
     def delete_user(self):
         self.is_deleted = True
+        self.username = f"{self.username}_[DELETED]"
+        self.email = f"{self.email}_[DELETED]"
+        self.about_user = f"[DELETED]"
+    
+    def change_password(self, password):
+        self.password = password
+        
+    def change_name(self, name):
+        self.name = name
+    
+    def change_email(self, email):
+        self.email = email
         
     def set_token(self):
         random_string = ''
@@ -51,15 +64,17 @@ class User(db.Model):
     def __repr__(self) -> str:
         return f"User {self.username}"
 
-
 class Posts(db.Model):
     __tablename__ = "posts"
     post_id = db.Column(db.Integer, primary_key=True)
     post_title = db.Column(db.String, index=True, nullable=False)
     post_body = db.Column(db.String, index=True)
+    
     date_added = db.Column(db.DateTime, default=dt.now())
+    
     author_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     comments = db.relationship("Comments", backref="comment_post", lazy="dynamic")
+    
     is_deleted = db.Column(db.Boolean, default=False)
         
     def delete_post(self):
@@ -71,9 +86,12 @@ class Comments(db.Model):
     __tablename__="comments"
     comment_id = db.Column(db.Integer, primary_key=True)
     comment_body = db.Column(db.String, nullable=False, index=True)
+    
     time_added = db.Column(db.DateTime, default=dt.now())
+    
     on_post = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
     by_user = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    
     is_deleted = db.Column(db.Boolean, default=False)
         
     def delete_comment(self):
