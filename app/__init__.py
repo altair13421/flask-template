@@ -12,4 +12,4 @@ migrate = Migrate(app, db)
 ma = Marshmallow(app)
 cors = CORS(app)
 
-from app import routes
+from app import routes, admin

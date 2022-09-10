@@ -20,15 +20,11 @@ class Admins(db.Model):
     
     def set_token(self):
         random_string = ''
-        while True:
-            for _ in range(16):
-                random_integer = random.randint(97, 97 + 26 - 1)
-                flip_bit = random.randint(0, 1)
-                random_integer = random_integer - 32 if flip_bit == 1 else random_integer
-                random_string += (chr(random_integer))
-            user = Admins.query.filter_by(token=random_string).first()
-            if not user:
-                break
+        for _ in range(16):
+            random_integer = random.randint(97, 97 + 26 - 1)
+            flip_bit = random.randint(0, 1)
+            random_integer = random_integer - 32 if flip_bit == 1 else random_integer
+            random_string += (chr(random_integer))
         self.admin_token = random_string
     
     def __repr__(self) -> str:
