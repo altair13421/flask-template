@@ -93,7 +93,7 @@ def change_password() -> None:
         print("Changing Password For the Existing Admin")
         while True:
             old_password = input("Old Password: \n >")
-            if admin_.password == old_password:
+            if admin_.admin_password == old_password:
                 print("Old Password Correct! Continue")
                 break
             else:
@@ -102,6 +102,7 @@ def change_password() -> None:
             new_password = input("New Password: \n >")
             new_password_re = input("Retype New Password: \n >")
             if new_password == new_password_re:
+                print(f"Password Updated for user {admin_.admin_username}")
                 break
         admin_.change_password(new_password)
         db.session.commit()
