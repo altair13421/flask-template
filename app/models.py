@@ -10,6 +10,7 @@ follows = db.Table(
 )
 """
 import random
+
 # Tables
 class User(db.Model):
     __tablename__ = "users"
@@ -79,6 +80,10 @@ class Posts(db.Model):
         
     def delete_post(self):
         self.is_deleted = True
+        for comment in self.comments:
+            comment.delete_comment()
+            db.session.commit()
+    
     def __repr__(self) -> str:
         return f"Post {self.post_title} || User_id {self.author_id}"
 
