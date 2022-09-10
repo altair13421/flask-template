@@ -14,6 +14,9 @@ class Admins(db.Model):
     
     def change_password(self, password):
         self.admin_password = password
+        
+    def get_token(self):
+        return self.admin_token
     
     def set_token(self):
         random_string = ''
@@ -35,8 +38,10 @@ class Admin_schema(ma.Schema):
     class Meta:
         fields = ("username", "password")
 
-@app.route('/admin_login', methods=["GET", "POST"])
+@app.route('/admin/login', methods=["GET", "POST"])
 def admin_login():
     pass
 
-
+@app.route("/admin/home", methods=["GET"])
+def admin_home():
+    pass

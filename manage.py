@@ -14,20 +14,35 @@ def deploy_app() -> None:
     upgrade()
 
 def clear_db() -> None:
-    from app import app, db
-    from app import models
+    from app import app, db, models, admin
+    admin_ = admin.Admins.query.get(1)
+    admin_creds = {
+        'username': admin_.admin_username,
+        'password': admin_.admin_password,
+        'token': admin_.admin_token,
+    }
     db.drop_all()
     db.create_all()
-    user = models.User(
-        username='admin',
-        password='paasword',
-        name='Admin',
-        age=99,
+    new_admin = admin.Admins(
+        admin_username = admin_creds["username"],
+        admin_password = admin_creds["password"],
+        admin_token = admin_creds["token"],
     )
+    db.session.add(new_admin)
+    user = models.User(
+        username = "dummy_user",
+        email = "dummy_email@nowhere.com",
+        password = "dummy_password",
+        name = "Dummy Name",
+        date_of_birth = "09-12-1999",
+    )
+    user.set_token()
+    user_token = user.get_token()
     print("===================\nCleaned DB\n")
     db.session.add(user)
     db.session.commit()
-    print("===================\nAdded user Admin\n")
+    print("===================\nAdded dummy user\n")
+    print(f"User token for testing is {user_token}, User_id is {user.user_id}")
 
 def run_server(host: str, port: int) -> None:
     from app import app
@@ -37,6 +52,24 @@ def run_server(host: str, port: int) -> None:
         port = 5000
     app.run(host=host, port=port, debug=True)
 
+def add_admin() -> str:
+    from app import db, app, admin
+    deploy_app()
+    users = admin.Admins.query.all()
+    if len(users) != 0:
+        print("Admin was already Added, Are You Sure, you are Not Forgetting the Credentials?")
+    else:
+        print("Adding an Admin Now, You will be Prompted to enter Username and Password")
+        username = input("Username: \n > ")
+        password = input("Password: \n > ")
+        new_admin = admin.Admins(
+            username=username,
+            password=password,
+        )
+        db.session.add(new_admin)
+    
+    return
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser(description="Run this server", epilog="Have Fun")
@@ -44,9 +77,17 @@ if __name__ == "__main__":
     server_group.add_argument("-runserver", default=False, action="store_true", help='Run Flask Application with default host and port, Can Change in -host and -port')
     server_group.add_argument("-host", type=str, default="0.0.0.0", help='Change the host ip of Flask Server, To Access it on other PC\'s, Use 0.0.0.0')
     server_group.add_argument("-port", type=int, default=5000, help="Enter the Port Manually")
+    # DB Group
     db_group = parser.add_argument_group('Database Functions')
     db_group.add_argument("-deploy", default=False, action="store_true", help="It initializes the db models in the models.py file.... stamps it, migrates it, and upgrades it")
     db_group.add_argument('-cleardb', default=False, action="store_true", help="Clears the DB")
+    # Admin Group
+    admin_group = parser.add_argument_group("Admin Functions")
+    admin_group.add_argument("-addadmin", action="store_true", help="Adds An Admin")
+    admin_group.add_argument("-changepassword", action="store_true", help="Changes Admin Password")
+    # Testing Purposes
+    test_group = parser.add_argument_group("Testing")
+    test_group.add_argument("-getdummy", action="store_true", help="Gets Test Dummy Information for Testing Purpose Only")
     
     args = parser.parse_args()
     if args.runserver:
