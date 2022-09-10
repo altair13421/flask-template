@@ -1,4 +1,7 @@
 # SERVER
+import json
+
+
 def run_server(host: str, port: int) -> None:
     from app import app
     if host == None:
@@ -108,6 +111,7 @@ def get_test_creds() -> None:
     result = user_schema.dump(user)
     result["token"] = user.get_token()
     result['password'] = user.password
+    print(json.dumps(result))
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
