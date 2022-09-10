@@ -1,3 +1,13 @@
+# SERVER
+def run_server(host: str, port: int) -> None:
+    from app import app
+    if host == None:
+        host = '0.0.0.0'
+    if port == None:
+        port = 5000
+    app.run(host=host, port=port, debug=True)
+
+# DB
 def deploy_app() -> None:
     from app import app, db
     from flask_migrate import upgrade, migrate, init, stamp
@@ -15,20 +25,24 @@ def deploy_app() -> None:
 
 def clear_db() -> None:
     from app import app, db, models, admin
-    admin_ = admin.Admins.query.get(1)
-    admin_creds = {
-        'username': admin_.admin_username,
-        'password': admin_.admin_password,
-        'token': admin_.admin_token,
-    }
+    len_admins = len(admin.Admins.query.all())
+    if len_admins != 0:
+        admin_ = admin.Admins.query.get(1)
+        admin_creds = {
+            'username': admin_.admin_username,
+            'password': admin_.admin_password,
+            'token': admin_.admin_token,
+        }
     db.drop_all()
     db.create_all()
-    new_admin = admin.Admins(
-        admin_username = admin_creds["username"],
-        admin_password = admin_creds["password"],
-        admin_token = admin_creds["token"],
-    )
-    db.session.add(new_admin)
+    if len_admins != 0:
+        new_admin = admin.Admins(
+            admin_username = admin_creds["username"],
+            admin_password = admin_creds["password"],
+            admin_token = admin_creds["token"],
+        )
+        db.session.add(new_admin)
+        db.session.commit()
     user = models.User(
         username = "dummy_user",
         email = "dummy_email@nowhere.com",
@@ -44,15 +58,8 @@ def clear_db() -> None:
     print("===================\nAdded dummy user\n")
     print(f"User token for testing is {user_token}, User_id is {user.user_id}")
 
-def run_server(host: str, port: int) -> None:
-    from app import app
-    if host == None:
-        host = '0.0.0.0'
-    if port == None:
-        port = 5000
-    app.run(host=host, port=port, debug=True)
-
-def add_admin() -> str:
+# ADMIN
+def add_admin() -> None:
     from app import db, app, admin
     deploy_app()
     users = admin.Admins.query.all()
@@ -60,15 +67,47 @@ def add_admin() -> str:
         print("Admin was already Added, Are You Sure, you are Not Forgetting the Credentials?")
     else:
         print("Adding an Admin Now, You will be Prompted to enter Username and Password")
-        username = input("Username: \n > ")
-        password = input("Password: \n > ")
+        username = input("Username: \n >")
+        while True:
+            password = input("Password: \n >")
+            retype_password = input("Password: \n >")
+            if password == retype_password:
+                break
         new_admin = admin.Admins(
             username=username,
             password=password,
         )
+        new_admin.set_token()
         db.session.add(new_admin)
-    
-    return
+        print(f"Admin Added, Token is {new_admin.get_token()}")
+
+def change_password() -> None:
+    from app import db, admin
+    if len(admin.Admins.query.all()) != 0:
+        admin_ = admin.Admins.query.get(1)
+        print("Changing Password For the Existing Admin")
+        while True:
+            old_password = input("Old Password: \n >")
+            if admin_.password == old_password:
+                print("Old Password Correct! Continue")
+                break
+            else:
+                print("Old Password Incorrect! Re Enter")
+        while True:
+            new_password = input("New Password: \n >")
+            new_password_re = input("Retype New Password: \n >")
+            if new_password == new_password_re:
+                break
+        admin_.change_password(new_password)
+
+# Tests
+def get_test_creds() -> None:
+    from app.models import User
+    from app.schemas import user_schema
+    user = User.query.get(1)
+    result = user_schema.dump(user)
+    result["token"] = user.get_token()
+    result['password'] = user.password
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
@@ -90,10 +129,15 @@ if __name__ == "__main__":
     test_group.add_argument("-getdummy", action="store_true", help="Gets Test Dummy Information for Testing Purpose Only")
     
     args = parser.parse_args()
+    # Server
     if args.runserver:
         run_server(host=args.host, port=args.port)
+    # DB
     if args.deploy:
         deploy_app()
     if args.cleardb:
         clear_db()
+    # Admin
+    
+    # Test
     
