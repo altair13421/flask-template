@@ -14,8 +14,8 @@ import random
 class User(db.Model):
     __tablename__ = "users"
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, index=True, nullable=False, unique=True)
-    email = db.Column(db.String, index=True, nullable=False, unique=True)
+    username = db.Column(db.String, index=True, nullable=False)
+    email = db.Column(db.String, index=True, nullable=False)
     password = db.Column(db.String, index=False, nullable=False)
     name = db.Column(db.String, index=True, nullable=False)
     date_of_birth = db.Column(db.String)
