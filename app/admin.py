@@ -1,5 +1,15 @@
 from app import app, db, ma
 import random
+from flask import render_template, redirect, url_for, current_app
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField, PasswordField, SubmitField, EmailField
+from wtforms.validators import DataRequired, EqualTo, ValidationError
+
+bootstrap = Bootstrap(app)
+login = LoginManager(app=app)
+login.login_view = 'admin_login'
 
 # Admin Model
 class Admins(db.Model):
@@ -34,10 +44,19 @@ class Admin_schema(ma.Schema):
     class Meta:
         fields = ("username", "password")
 
-@app.route('/admin/login', methods=["GET", "POST"])
-def admin_login():
+# FORMS
+class Admin_Login(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Enter the Panel")
     pass
 
+
+@app.route('/admin/login', methods=["GET", "POST"])
+def admin_login():
+    return render_template('admin_login.html')
+
+@login.login_required
 @app.route("/admin/home", methods=["GET"])
 def admin_home():
     pass
