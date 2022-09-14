@@ -2,12 +2,14 @@ from app import app, db, ma
 import random
 from flask import render_template, redirect, url_for, current_app, flash, request
 from flask_bootstrap import Bootstrap
+from flask_mdbootstrap import MDBootstrap
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user, UserMixin
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
 
+mdbootstrap = MDBootstrap(app)
 bootstrap = Bootstrap(app)
 login = LoginManager(app=app)
 login.login_view = 'admin_login'

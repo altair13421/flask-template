@@ -1,4 +1,4 @@
-{% extends "bootstrap/base.html" %}
+{% extends "mdbootstrap/base.html" %}
 
 {% block title %}
     {% if title %} {{ title }} - Admin {% else %} Admin {% endif %}
@@ -7,15 +7,18 @@
     <nav class="navbar navbar-default">
         <a class="btn" href="{{url_for('base')}}">Home</a>
         {% if current_user.is_authenticated %}
-            
             <a class="btn" href="{{url_for('logout')}}">Logout</a>
         {% else %}
-            <a class="btn" href="{{url_for('logout')}}">Logout</a>
             <a class="btn" href="{{url_for('login')}}">Login</a>
         {%endif%}
     </nav>
 {% endblock %}
-
+<script>
+    import * as mdb from 'mdb-ui-kit';
+</script>
+<style>
+    @import '~mdb-ui-kit/css/mdb.min.css';
+</style>
 {% block content %}
     <div class="container">
         {%with messages = get_flashed_messages()%}
