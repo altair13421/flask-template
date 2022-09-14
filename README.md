@@ -1,5 +1,7 @@
 # flask-template
+---
 
+```
 usage: manage.py [-h] [-runserver] [-host HOST] [-port PORT] [-deploy] [-cleardb] [-addadmin] [-changepassword] [-getadmintoken] [-getdummy]
 
 Run this server
@@ -35,3 +37,4 @@ Testing:
   -getdummy        Gets Test Dummy Information for Testing Purpose Only
 
 Have Fun
+```
