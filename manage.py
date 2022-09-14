@@ -9,7 +9,12 @@ def run_server(host: str, port: int) -> None:
         host = '0.0.0.0'
     if port == None:
         port = 5000
-    app.run(host=host, port=port, debug=True)
+    app.run(
+        host=host, 
+        port=port, 
+        debug=True, 
+        # ssl_context="adhoc"
+    )
 
 # DB
 def deploy_app() -> None:

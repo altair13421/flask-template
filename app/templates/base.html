@@ -3,23 +3,62 @@
 {% block title %}
     {% if title %} {{ title }} - Admin {% else %} Admin {% endif %}
 {% endblock %}
-<!-- Font Awesome -->
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
+
 <!-- MDB -->
-<script
-  type="text/javascript"
-  src="/static/scripts/shitty.js"
-></script>
+{% block scripts %}
+    {% if config.get('MDBOOTSTRAP_USE_PRO', False) %}
+    <!-- jQuery -->
+    <script src="{{ mdbootstrap_find_resource('MDB-Pro/js/jquery.js', cdn='local') }}"></script>
+    <!-- Bootstrap tooltips -->
+    <script src="{{ mdbootstrap_find_resource('MDB-Pro/js/popper.js', cdn='local') }}"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ mdbootstrap_find_resource('MDB-Pro/js/bootstrap.js', cdn='local') }}"></script>
+    <!-- MDB core JavaScript -->
+    <script src="/static/scripts/shitty.js"></script>
+
+    {% else %}
+    <!-- jQuery -->
+    <script src="{{ mdbootstrap_find_resource('MDB/js/jquery.js', cdn='local') }}"></script>
+    <!-- Bootstrap tooltips -->
+    <script src="{{ mdbootstrap_find_resource('MDB/js/popper.js', cdn='local') }}"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ mdbootstrap_find_resource('MDB/js/bootstrap.js', cdn='local') }}"></script>
+    <!-- MDB core JavaScript -->
+    <script src="/static/scripts/shitty.js"></script>
+    {% endif %}
+{% endblock scripts %}
+
+{% block body %}
+
+{%- block styles %}
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{{ mdbootstrap_find_resource('plugins/fontawesome-free/css/all.css', cdn='local') }}" rel="stylesheet" type="text/css">
+{% if config.get('MDBOOTSTRAP_USE_PRO', False) %}
+<!-- Bootstrap -->
+<link rel="stylesheet" href="{{ mdbootstrap_find_resource('MDB-Pro/css/bootstrap.css', cdn='local') }}" rel="stylesheet" type="text/css">
+<!-- MDB -->
+
+<link rel="stylesheet" href="/static/styles/style.css" rel="stylesheet" type="text/css">
+{% else %}
+<!-- Bootstrap -->
+<link rel="stylesheet" href="{{ mdbootstrap_find_resource('MDB/css/bootstrap.css', cdn='local') }}" rel="stylesheet" type="text/css">
+<!-- MDB -->
+
+<link rel="stylesheet" href="/static/styles/style.css" rel="stylesheet" type="text/css">
+
+{% endif %}
+{%- endblock styles %}
+
 {% block header %}
 <style>body {
-    background-color: #fbfbfb;
+    background-color: #313131;
+    padding-top: 25px;
+    padding-left: 10px;
   }
   @media (min-width: 991.98px) {
-    main {
+    body {
       padding-left: 240px;
+      
     }
   }
   
@@ -55,57 +94,9 @@
   }</style>
 <!--Main Navigation-->
 <header>
-    {% block sidebar %}
-    <!-- Sidebar -->
-    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
-      <div class="position-sticky">
-        <div class="list-group list-group-flush mx-3 mt-4">
-          <a
-            href="#"
-            class="list-group-item list-group-item-action py-2 ripple"
-            aria-current="true"
-          >
-            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple active">
-            <i class="fas fa-chart-area fa-fw me-3"></i><span>Webiste traffic</span>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-lock fa-fw me-3"></i><span>Password</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple">
-            <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-globe fa-fw me-3"></i><span>International</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-building fa-fw me-3"></i><span>Partners</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-calendar fa-fw me-3"></i><span>Calendar</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-users fa-fw me-3"></i><span>Users</span></a
-          >
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"
-            ><i class="fas fa-money-bill fa-fw me-3"></i><span>Sales</span></a
-          >
-        </div>
-      </div>
-    </nav>
-    <!-- Sidebar -->
-    {% endblock %}
-  
     <!-- Navbar -->
     {% block navbar %}
-    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <nav id="main-navbar" class="navbar navbar-expand-lg fixed-top bg-dark">
       <!-- Container wrapper -->
       <div class="container-fluid">
         <!-- Toggle button -->
@@ -124,9 +115,9 @@
         <!-- Brand -->
         <a class="navbar-brand" href="#">
           <img
-            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-            height="25"
-            alt="MDB Logo"
+            src="/static/imgs/favico.png"
+            height="50"
+            alt="ASS"
             loading="lazy"
           />
         </a>
@@ -149,7 +140,53 @@
     <!-- Navbar -->
   </header>
   <!--Main Navigation-->
-  
+  {% block sidebar %}
+  <!-- Sidebar -->
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar bg-dark">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-4 bg-dark">
+        <a
+          href="#"
+          class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          aria-current="true"
+        >
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple active bg-dark">
+          <i class="fas fa-chart-area fa-fw me-3"></i><span>Webiste traffic</span>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-lock fa-fw me-3"></i><span>Password</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark">
+          <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-globe fa-fw me-3"></i><span>International</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-building fa-fw me-3"></i><span>Partners</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-calendar fa-fw me-3"></i><span>Calendar</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-users fa-fw me-3"></i><span>Users</span></a
+        >
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+          ><i class="fas fa-money-bill fa-fw me-3"></i><span>Sales</span></a
+        >
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+  {% endblock %}
   <!--Main layout-->
   <main style="margin-top: 58px;">
     <div class="container pt-4"></div>
@@ -169,4 +206,5 @@
         {%block app_content%}
         {%endblock%}
     </div>
+{% endblock %}
 {% endblock %}
