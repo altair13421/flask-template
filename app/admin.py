@@ -20,6 +20,7 @@ login_messages = (
     "Login or Gimme your Soul",
     "Soul accepted, now You may Login",
     "BRING ME THEIR SOULS, or just login",
+    "WE LIVE IN THE FUTURE, But you still have to login",
 )
 
 # Admin Model
@@ -74,10 +75,10 @@ class Admin_Login_Form(FlaskForm):
 def admin_login():
     if current_user.is_authenticated:
         return redirect(url_for('admin_home'))
-    form = Admin_Login_Form()
-    if form.validate_on_submit():
-        user = Admins.query.filter_by(admin_username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
+    if request.method == "POST":
+        # flash(form_data)
+        user = Admins.query.filter_by(admin_username=request.form.get("username")).first()
+        if user is None or not user.check_password(request.form.get("password")):
             flash('Invalid Username or Password')
             return redirect(url_for('admin_login'))
         login_user(user)
@@ -90,7 +91,7 @@ def admin_login():
         'admin_login.html', 
         title="Login",
         name_form='Admin Login',
-        form = form,
+        # form = form,
     )
 
 @app.route("/admin/home", methods=["GET"])
