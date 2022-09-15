@@ -21,6 +21,7 @@ class User(db.Model):
     name = db.Column(db.String, index=True, nullable=False)
     date_of_birth = db.Column(db.String)
     about_user = db.Column(db.String, default=f"Hi I am User {username}")
+    sign_up_time = db.Column(db.String, default= f"{dt.now().isoformat()}")
     token = db.Column(db.String, unique=True)
 
     posts = db.relationship("Posts", backref="writer", lazy="dynamic")
@@ -71,7 +72,7 @@ class Posts(db.Model):
     post_title = db.Column(db.String, index=True, nullable=False)
     post_body = db.Column(db.String, index=True)
     
-    date_added = db.Column(db.DateTime, default=dt.now())
+    date_added = db.Column(db.String, default=f"{dt.now().isoformat()}")
     
     author_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     comments = db.relationship("Comments", backref="comment_post", lazy="dynamic")
@@ -92,7 +93,7 @@ class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True)
     comment_body = db.Column(db.String, nullable=False, index=True)
     
-    time_added = db.Column(db.DateTime, default=dt.now())
+    time_added = db.Column(db.String, default=f"{dt.now().isoformat()}")
     
     on_post = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
     by_user = db.Column(db.Integer, db.ForeignKey("users.user_id"))

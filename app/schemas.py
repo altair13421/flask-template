@@ -2,15 +2,38 @@ from . import ma
 
 class User_Schema(ma.Schema):
     class Meta:
-        fields = ('user_id', 'username', 'email', 'name', "date_of_birth", "is_deleted", "about_user")
+        fields = (
+            'user_id', 
+            'username', 
+            'email', 
+            'name', 
+            "date_of_birth", 
+            "is_deleted", 
+            "about_user", 
+            "sign_up_time"
+        )
 
 class Post_Schema(ma.Schema):
     class Meta:
-        fields = ('post_id', 'post_title', 'post_body', 'author_id', 'date_added', "is_deleted")
+        fields = (
+            'post_id', 
+            'post_title', 
+            'post_body', 
+            'author_id', 
+            'date_added', 
+            "is_deleted"
+        )
 
 class Comment_Schema(ma.Schema):
     class Meta:
-        fields = ('comment_id', 'comment_body', 'on_post', 'by_user', "time_added", "is_deleted")
+        fields = (
+            'comment_id', 
+            'comment_body', 
+            'on_post', 
+            'by_user', 
+            "time_added", 
+            "is_deleted"
+        )
         
 post_schema = Post_Schema()
 posts_schema = Post_Schema(many=True)

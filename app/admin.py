@@ -99,9 +99,33 @@ def admin_login():
 def admin_home():
     return render_template("admin.html")
 
-@app.route('/admin')
-def admin_thing():
-    return render_template('base.html')
+@app.route('/admin/tables')
+@login_required
+def tables():
+    engine_inspector = db.inspect(db.engine)
+    table_names = engine_inspector.get_table_names()
+    return render_template(
+        "admin_tables.html", 
+        table_names=table_names,
+    )
+
+@app.route('/admin/table/<table_name>')
+@login_required
+def view_table(table_name: str):
+    if table_name == "alembic_version":
+        flash(f"No Table Data For {table_name}, as it is a default Table")
+        return redirect(url_for('tables'))
+    engine_inspector = db.inspect(db.engine)
+    # DB QUERY
+    table_data = db.engine.execute(f"SELECT * FROM {table_name}").all()
+    table_columns = engine_inspector.get_columns(table_name)
+    flash(f"Table Data Get Successful for {table_name}")
+    return render_template(
+        "raw_table.html",
+        table_name=table_name,
+        table_columns=table_columns,
+        table_data=table_data,
+    )
 
 @app.route('/admin/logout', methods=['GET', 'POST'])
 @login_required
