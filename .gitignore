@@ -1,4 +1,4 @@
-/app/__pycache__/
-/app/database.db
-/migrations/
-/node_modules/
+app/__pycache__/
+app/database.db
+migrations/
+node_modules/
