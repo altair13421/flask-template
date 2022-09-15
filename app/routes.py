@@ -77,7 +77,7 @@ def add_user() -> str:
         )
         new_user.set_token()
         add(new_user)
-        return jsonify(good_response({"user_id": new_user.user_id, "user_token": new_user.get_token()}))
+        return jsonify(good_response({"user_id": new_user.id, "user_token": new_user.get_token()}))
     else:
         return jsonify(good_response({"error": "bad request"}))
 
@@ -175,7 +175,7 @@ def add_post(user_id: int) -> str:
                 writer=user,
             )
             add(post)
-            return jsonify(good_response({"post_id": post.post_id}))
+            return jsonify(good_response({"post_id": post.id}))
     else:
         return jsonify(bad_response({"error": "bad request"}))
 
@@ -199,7 +199,7 @@ def view_post(user_id: int, post_id: int) -> str:
         result['comments'] = schemas.comments_schema.dump(all_comments)
         for i in range(len(result['comments'])):
             result["comments"][i]['by_user'] = all_comments[i].comment_by_user.username
-            result["comments"][i]["user_id"] = all_comments[i].comment_by_user.user_id
+            result["comments"][i]["user_id"] = all_comments[i].comment_by_user.id
         return jsonify(good_response(result))
     else:
         return jsonify(bad_response("[post_deleted]"))
@@ -256,7 +256,7 @@ def add_comment(user_id: int) -> str:
                     comment_post=Posts.query.get(data["post_id"]),
                 )
                 add(comment)
-                return jsonify(good_response({"comment_id": comment.comment_id, "post_id": data["post_id"]}))
+                return jsonify(good_response({"comment_id": comment.id, "post_id": data["post_id"]}))
 
 # Edit Comments
 @app.route('/user/<user_id>/comment/<comment_id>/delete', methods=['GET',"POST"])

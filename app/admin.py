@@ -1,3 +1,4 @@
+from wsgiref.util import request_uri
 from app import app, db, ma
 import random
 from flask import render_template, redirect, url_for, current_app, flash, request
@@ -119,10 +120,30 @@ def view_table(table_name: str):
     # DB QUERY
     table_data = db.engine.execute(f"SELECT * FROM {table_name}").all()
     table_columns = engine_inspector.get_columns(table_name)
+    if not table_name == "admin":
+        table_columns = table_columns[0:3]
+        table_data = [item[0:3] for item in table_data]
     flash(f"Table Data Get Successful for {table_name}")
     return render_template(
         "raw_table.html",
         table_name=table_name,
+        table_columns=table_columns,
+        table_data=table_data,
+    )
+
+@app.route("/admin/table/<table_name>/<id>")
+def view_item(table_name:str, id: int):    
+    if table_name == "alembic_version":
+        flash(f"No Table Data For {table_name}, as it is a default Table")
+        return redirect(url_for('tables'))
+    engine_inspector = db.inspect(db.engine)
+    # DB QUERY
+    table_data = db.engine.execute(f"SELECT * FROM {table_name} WHERE id={int(id)}").all()[0]
+    table_columns = engine_inspector.get_columns(table_name)
+    return render_template(
+        "raw_data.html",
+        table_name=table_name,
+        length = len(table_columns),
         table_columns=table_columns,
         table_data=table_data,
     )

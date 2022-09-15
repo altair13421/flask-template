@@ -3,7 +3,7 @@ from . import ma
 class User_Schema(ma.Schema):
     class Meta:
         fields = (
-            'user_id', 
+            'id', 
             'username', 
             'email', 
             'name', 
@@ -16,7 +16,7 @@ class User_Schema(ma.Schema):
 class Post_Schema(ma.Schema):
     class Meta:
         fields = (
-            'post_id', 
+            'id', 
             'post_title', 
             'post_body', 
             'author_id', 
@@ -27,7 +27,7 @@ class Post_Schema(ma.Schema):
 class Comment_Schema(ma.Schema):
     class Meta:
         fields = (
-            'comment_id', 
+            'id', 
             'comment_body', 
             'on_post', 
             'by_user', 

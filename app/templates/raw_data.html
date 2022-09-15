@@ -1,0 +1,47 @@
+{% extends "admin.html" %}
+
+{% block admin_content %}
+    <h5 class="text-sm-center">Table Name: {{table_name}}</h5>
+    <table class="table align-middle mb-0 table-responsive-sm table-hover">
+        <thead class="">
+          <tr>
+            <th>Property</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in range(length) %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="ms-3">
+                  <p class="fw-bold mb-1">{{table_columns[i]["name"]}}</p>
+                  <p class="text-muted mb-0">{{table_columns[i]["type"]}}</p>
+                </div>
+              </div>
+            </td>
+            <td>
+                <div class="ms-3">
+                    <p class="fw-bold mb-1">{{table_data[i]}}</p>
+                  </div>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-3">
+                      <p class="fw-bold mb-1">Actions</p>
+                    </div>
+                  </div>
+            </td>
+            <td>
+
+                <button type="button" class="btn btn-link btn-sm btn-rounded">
+                    <a href={{url_for('view_table', table_name=table_name)}}> << Go Back</a>
+                </button>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+{% endblock %}

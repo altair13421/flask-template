@@ -14,7 +14,7 @@ import random
 # Tables
 class User(db.Model):
     __tablename__ = "users"
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, index=True, nullable=False)
     email = db.Column(db.String, index=True, nullable=False)
     password = db.Column(db.String, index=False, nullable=False)
@@ -68,13 +68,13 @@ class User(db.Model):
 
 class Posts(db.Model):
     __tablename__ = "posts"
-    post_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     post_title = db.Column(db.String, index=True, nullable=False)
     post_body = db.Column(db.String, index=True)
     
     date_added = db.Column(db.String, default=f"{dt.now().isoformat()}")
     
-    author_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     comments = db.relationship("Comments", backref="comment_post", lazy="dynamic")
     
     is_deleted = db.Column(db.Boolean, default=False)
@@ -90,13 +90,13 @@ class Posts(db.Model):
 
 class Comments(db.Model):
     __tablename__="comments"
-    comment_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     comment_body = db.Column(db.String, nullable=False, index=True)
     
     time_added = db.Column(db.String, default=f"{dt.now().isoformat()}")
     
-    on_post = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
-    by_user = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    on_post = db.Column(db.Integer, db.ForeignKey("posts.id"))
+    by_user = db.Column(db.Integer, db.ForeignKey("users.id"))
     
     is_deleted = db.Column(db.Boolean, default=False)
         

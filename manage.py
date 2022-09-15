@@ -66,7 +66,7 @@ def clear_db() -> None:
     db.session.add(user)
     db.session.commit()
     print("===================\nAdded dummy user\n")
-    print(f"User token for testing is {user_token}, \nUser_id is {user.user_id} \nUsername is {user.username} \nPassword is {user.password}")
+    print(f"User token for testing is {user_token}, \nUser_id is {user.id} \nUsername is {user.username} \nPassword is {user.password}")
 
 # ADMIN
 def add_admin() -> None:
