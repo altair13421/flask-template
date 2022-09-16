@@ -131,6 +131,22 @@ def view_table(table_name: str):
         table_data=table_data,
     )
 
+@app.route('/admin/contact_dev')
+@login_required
+def contact_dev():
+    contact_messages = (
+        "Dev Contacted, Don't Worry, He'll Come save you",
+        "Your Knight in Shining armor is here to save you",
+        "Do you want to be princess carried too? Dev Contacted",
+        "Your Job as a Fat Guy is Failing...... Dev Contacted",
+        "Dev is Happy to Help, as Long as he is Being Paid",
+        "Pay your devs more, Like Really! Dev Contacted",
+        "PEOPLE, Stop For a Moment, Dev Contacted"
+    )
+    flash(contact_messages[random.randint(0, len(contact_messages)-1)])
+    return redirect(url_for('admin_home'))
+    
+
 @app.route("/admin/table/<table_name>/<id>")
 def view_item(table_name:str, id: int):    
     if table_name == "alembic_version":

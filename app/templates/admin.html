@@ -1,8 +1,6 @@
 
 {% extends "base.html" %}
 {% block app_content %}
-
-    <h2 class="text-center">Overview</h2>
     <span></span>
     {% block admin_content %}
     <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -12,7 +10,11 @@
               <h5 class="card-title">Overview</h5>
               <p class="card-text">
                 Welcome to the Admin Panel.
+                Didn't Want to Sign in?
               </p>
+              <div class="text-center">
+                <a href="{{url_for('logout')}}" class="btn btn-primary btn-link">Logout</a>
+              </div>
             </div>
           </div>
         </div>
@@ -23,26 +25,35 @@
               <p class="card-text">
                 View All the Tables and Available Data
               </p>
-              <a href="{{url_for('tables')}}" class="btn btn-primary btn-link">View</a>
+              <div class="text-center">
+                <a href="{{url_for('tables')}}" class="btn btn-primary btn-link">View</a>
+              </div>
             </div>
           </div>
         </div>
         <div class="col">
           <div class="card">
+            <img src="/static/imgs/errors.png" class="card-img-top" alt="Error"/>
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+              <h5 class="card-title">Contact Developer</h5>
+              <p class="card-text">Found an Error? Contact Developer</p>
+              <div class="text-center">
+                <a href="{{url_for('contact_dev')}}" class="btn btn-primary btn-link">Contact</a>
+              </div>
             </div>
           </div>
         </div>
         <div class="col">
           <div class="card">
+            <img src="/static/imgs/chart.png" class="card-img-top" alt="stats"/>
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
+              <h5 class="card-title">Stats</h5>
               <p class="card-text">
-                This is a longer card with supporting text below as a natural lead-in to
-                additional content. This content is a little bit longer.
+                View Server Stats
               </p>
+              <div class="text-center">
+                <a href="{{url_for('tables')}}" class="btn btn-primary btn-link">Stats</a>
+              </div>
             </div>
           </div>
         </div>
