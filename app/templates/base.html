@@ -116,7 +116,7 @@
         </button>
   
         <!-- Brand -->
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{url_for('admin_home')}}">
           <img
             src="/static/imgs/admina.png"
             height="50"
@@ -158,7 +158,7 @@
         <a href="{{url_for('tables')}}" class="list-group-item list-group-item-action py-2 ripple active bg-dark">
           <i class="fas fa-chart-area fa-fw me-3"></i><span>See Tables in DB</span>
         </a>
-        <a href="#" class="list-group-item list-group-item-action py-2 ripple bg-dark"
+        <a href="{{url_for('view_table', table_name='admin')}}" class="list-group-item list-group-item-action py-2 ripple bg-dark"
           ><i class="fas fa-money-bill fa-fw me-3"></i><span>Admins</span></a
         >
       </div>
