@@ -89,7 +89,7 @@ def admin_login():
             next_page = url_for('admin_home')
         return redirect(next_page)
     return render_template(
-        'admin_login.html', 
+        'admin/admin_login.html', 
         title="Login",
         name_form='Admin Login',
         # form = form,
@@ -98,7 +98,7 @@ def admin_login():
 @app.route("/admin/home", methods=["GET"])
 @login_required
 def admin_home():
-    return render_template("admin.html")
+    return render_template("admin/admin.html")
 
 @app.route('/admin/tables')
 @login_required
@@ -106,7 +106,7 @@ def tables():
     engine_inspector = db.inspect(db.engine)
     table_names = engine_inspector.get_table_names()
     return render_template(
-        "admin_tables.html", 
+        "admin/admin_tables.html", 
         table_names=table_names,
     )
 
@@ -125,7 +125,7 @@ def view_table(table_name: str):
         table_data = [item[0:3] for item in table_data]
     flash(f"Table Data Get Successful for {table_name}")
     return render_template(
-        "raw_table.html",
+        "admin/raw_table.html",
         table_name=table_name,
         table_columns=table_columns,
         table_data=table_data,
@@ -157,7 +157,7 @@ def view_item(table_name:str, id: int):
     table_data = db.engine.execute(f"SELECT * FROM {table_name} WHERE id={int(id)}").all()[0]
     table_columns = engine_inspector.get_columns(table_name)
     return render_template(
-        "raw_data.html",
+        "admin/raw_data.html",
         table_name=table_name,
         length = len(table_columns),
         table_columns=table_columns,
